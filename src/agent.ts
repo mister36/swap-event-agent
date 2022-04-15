@@ -8,20 +8,23 @@ import {
   FindingType,
 } from "forta-agent";
 
-const CONTRACTS = [
-  "0x7a250d5630b4cf539739df2c5dacb4c659f2488d",
-  "0x68b3465833fb72a70ecdf485e0e4c7bd8665fc45",
-  "0xe592427a0aece92de3edee1f18e0157c05861564",
-];
+const SWAP_EVENT_1 =
+  "event Swap( address indexed sender, uint amount0In, uint amount1In, uint amount0Out, uint amount1Out, address indexed to )";
+
+const SWAP_EVENT2 =
+  "event Swap( address indexed sender, address indexed recipient, int256 amount0, int256 amount1, uint160 sqrtPriceX96, uint128 liquidity, int24 tick )";
 
 const handleTransaction: HandleTransaction = async (
   txEvent: TransactionEvent
 ) => {
   const findings: Finding[] = [];
 
-  const { to, hash } = txEvent.transaction;
+  const { hash } = txEvent.transaction;
 
-  if (CONTRACTS.includes(to || "")) {
+  const swaps_1 = txEvent.filterLog(SWAP_EVENT_1);
+  const swaps_2 = txEvent.filterLog(SWAP_EVENT2);
+
+  if (swaps_1.length > 0 || swaps_2.length > 0) {
     findings.push(
       Finding.fromObject({
         name: "Swap",
@@ -31,7 +34,6 @@ const handleTransaction: HandleTransaction = async (
         severity: FindingSeverity.Info,
         metadata: {
           transaction: hash,
-          swapRouter: to as any,
         },
       })
     );
