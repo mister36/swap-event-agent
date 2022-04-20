@@ -91,7 +91,6 @@ const handleTransaction: HandleTransaction = async (
 
       if (swapVersion === 3) {
         if (poolToArgsCache.has(address)) {
-          console.log("HAS CACHE");
           // if address in cache, no need for network calls
           [token0, token1, fee] =
             poolToArgsCache.get(address)?.split("+") || [];
@@ -121,7 +120,6 @@ const handleTransaction: HandleTransaction = async (
         }
       } else {
         if (poolToArgsCache.has(address)) {
-          console.log("HAS CACHE");
           // if address in cache, no need for network calls
           [token0, token1] = poolToArgsCache.get(address)?.split("+") || [];
           pool = argsToPoolCache.get(`${token0}+${token1}`);
